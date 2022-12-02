@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useTimerContext } from 'renderer/context/TimerContext';
 import ConfirmDialog from './ConfirmDialog';
 
@@ -32,14 +32,6 @@ const Timer = () => {
 
   return (
     <>
-      <Text fontWeight="bold" fontSize="7xl" color="white">
-        {`${
-          Math.floor(time / 60) < 10
-            ? `0${Math.floor(time / 60)}`
-            : `${Math.floor(time / 60)}`
-        }:${time % 60 < 10 ? `0${time % 60}` : time % 60}`}
-      </Text>
-
       <Flex>
         <Button
           width="7rem"
