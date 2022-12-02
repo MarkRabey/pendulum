@@ -1,16 +1,16 @@
-import { ChakraProvider } from '@chakra-ui/react';
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import Timer from './components/Timer';
+import Provider from './Provider';
+import Home from './screens/Home';
 
 export default function App() {
   return (
-    <ChakraProvider>
+    <Provider>
       <Router>
         <Routes>
-          <Route path="/" element={<Timer />} />
+          <Route path="/" element={<Home />} />
         </Routes>
       </Router>
-    </ChakraProvider>
+    </Provider>
   );
 }
