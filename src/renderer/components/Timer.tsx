@@ -1,14 +1,19 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import ConfirmDialog from './ConfirmDialog';
 
 const Timer = () => {
-  const [time, setTime] = useState(0);
+  const [selectedTime, setSelectedTime] = useState(1200);
+  const [time, setTime] = useState(1200);
   const [timerStarted, setTimerStarted] = useState(false);
   const buttons = [
     {
       value: 900,
       display: '15 minutes',
+    },
+    {
+      value: 1200,
+      display: '20 minutes',
     },
     {
       value: 1800,
@@ -39,7 +44,7 @@ const Timer = () => {
   }, [timerStarted, time]);
 
   const handleReset = () => {
-    setTime(900);
+    setTime(selectedTime);
     setTimerStarted(false);
   };
 
@@ -51,9 +56,7 @@ const Timer = () => {
         alignItems="center"
         flexDirection="column"
       >
-        <Text color="white" fontWeight="bold" marginTop="20" fontSize="35">
-          Pendulum
-        </Text>
+        <Heading color="white">Pendulum</Heading>
 
         <Text fontWeight="bold" fontSize="7xl" color="white">
           {`${
@@ -78,6 +81,7 @@ const Timer = () => {
               background: 'blue.300',
               marginX: 5,
               disabled: !timerStarted,
+              color: 'white',
             }}
             confirmColorScheme="blue"
             confirmLabel="Reset"
@@ -90,12 +94,13 @@ const Timer = () => {
             <Button
               key={value}
               marginX={4}
-              background="green.300"
-              color="white"
+              colorScheme="green"
               onClick={() => {
                 setTimerStarted(false);
                 setTime(value);
+                setSelectedTime(value);
               }}
+              variant={selectedTime === value ? 'outline' : 'solid'}
             >
               {display}
             </Button>
