@@ -1,5 +1,6 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import ConfirmDialog from './ConfirmDialog';
 
 const Timer = () => {
   const [time, setTime] = useState(0);
@@ -37,6 +38,11 @@ const Timer = () => {
     return () => clearInterval(interval);
   }, [timerStarted, time]);
 
+  const handleReset = () => {
+    setTime(900);
+    setTimerStarted(false);
+  };
+
   return (
     <div style={{ height: '100%' }}>
       <Flex
@@ -66,6 +72,17 @@ const Timer = () => {
           >
             {!timerStarted ? 'Start' : 'Pause'}
           </Button>
+          <ConfirmDialog
+            triggerLabel="Reset"
+            triggerButtonProps={{
+              background: 'blue.300',
+              marginX: 5,
+              disabled: !timerStarted,
+            }}
+            confirmColorScheme="blue"
+            confirmLabel="Reset"
+            onConfirm={handleReset}
+          />
         </Flex>
 
         <Flex marginTop={10}>
