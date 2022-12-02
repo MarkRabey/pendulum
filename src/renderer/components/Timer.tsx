@@ -1,3 +1,4 @@
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 const Timer = () => {
@@ -37,33 +38,53 @@ const Timer = () => {
   }, [timerStarted, time]);
 
   return (
-    <div>
-      <h1>Pendulm</h1>
-      {`${
-        Math.floor(time / 60) < 10
-          ? `0${Math.floor(time / 60)}`
-          : `${Math.floor(time / 60)}`
-      }:${time % 60 < 10 ? `0${time % 60}` : time % 60}`}
-      <div>
-        <button type="button" onClick={toggleTimer}>
-          {!timerStarted ? 'Start' : 'Pause'}
-        </button>
-      </div>
+    <div style={{ height: '100%' }}>
+      <Flex
+        background="gray.700"
+        height="100%"
+        alignItems="center"
+        flexDirection="column"
+      >
+        <Text color="white" fontWeight="bold" marginTop="20" fontSize="35">
+          Pendulum
+        </Text>
 
-      <div>
-        {buttons.map(({ value, display }) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => {
-              setTimerStarted(false);
-              setTime(value);
-            }}
+        <Text fontWeight="bold" fontSize="7xl" color="white">
+          {`${
+            Math.floor(time / 60) < 10
+              ? `0${Math.floor(time / 60)}`
+              : `${Math.floor(time / 60)}`
+          }:${time % 60 < 10 ? `0${time % 60}` : time % 60}`}
+        </Text>
+
+        <Flex>
+          <Button
+            width="7rem"
+            background="tomato"
+            color="white"
+            onClick={toggleTimer}
           >
-            {display}
-          </button>
-        ))}
-      </div>
+            {!timerStarted ? 'Start' : 'Pause'}
+          </Button>
+        </Flex>
+
+        <Flex marginTop={10}>
+          {buttons.map(({ value, display }) => (
+            <Button
+              key={value}
+              marginX={4}
+              background="green.300"
+              color="white"
+              onClick={() => {
+                setTimerStarted(false);
+                setTime(value);
+              }}
+            >
+              {display}
+            </Button>
+          ))}
+        </Flex>
+      </Flex>
     </div>
   );
 };
