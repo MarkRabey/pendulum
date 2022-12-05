@@ -6,8 +6,8 @@ const buttons = [
     display: '15 minutes',
   },
   {
-    value: 1200,
-    display: '20 minutes',
+    value: 1500,
+    display: '25 minutes',
   },
   {
     value: 1800,

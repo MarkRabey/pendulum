@@ -4,17 +4,24 @@ export type TimerContextType = {
   selectedTime: number;
   time: number;
   timerRunning: boolean;
+  pomodoroMode: boolean;
   toggleTimer: () => void;
   handleSetTime: (value: number) => void;
   handleReset: () => void;
+  handleTogglePomodoroMode: () => void;
 };
 
 export const TimerContext = createContext<TimerContextType | null>(null);
 
 const TimerProvider = ({ children }: { children: React.ReactNode }) => {
-  const [selectedTime, setSelectedTime] = useState(1200);
-  const [time, setTime] = useState(1200);
+  const [selectedTime, setSelectedTime] = useState(10);
+  const [time, setTime] = useState(10);
   const [timerRunning, setTimerRunning] = useState(false);
+  const [pomodoroMode, setPomodoroMode] = useState(false);
+
+  const toggleTimer = () => {
+    setTimerRunning(!timerRunning);
+  };
 
   const handleSetTime = (value: number) => {
     setTimerRunning(false);
@@ -22,13 +29,14 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     setTime(value);
   };
 
-  const toggleTimer = () => {
-    setTimerRunning(!timerRunning);
-  };
-
   const handleReset = () => {
     setTime(selectedTime);
     setTimerRunning(false);
+  };
+
+  const handleTogglePomodoroMode = () => {
+    setPomodoroMode(!pomodoroMode);
+    handleReset();
   };
 
   useEffect(() => {
@@ -51,9 +59,11 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         selectedTime,
         time,
         timerRunning,
+        pomodoroMode,
         toggleTimer,
         handleSetTime,
         handleReset,
+        handleTogglePomodoroMode,
       }}
     >
       {children}

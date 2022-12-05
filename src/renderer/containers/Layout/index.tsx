@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import Header from 'renderer/components/Header';
 
 interface LayoutProps {
@@ -14,7 +14,9 @@ const Layout = ({ children }: LayoutProps) => {
       flexDirection="column"
     >
       <Header />
-      {children}
+      <Box width="100%" px={6}>
+        {children}
+      </Box>
     </Flex>
   );
 };

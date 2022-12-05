@@ -1,3 +1,4 @@
+import { Flex } from '@chakra-ui/react';
 import IntervalSelector from 'renderer/components/IntervalSelector';
 import TimerControls from 'renderer/components/TimerControls';
 import TimerDisplay from 'renderer/components/TimerDisplay';
@@ -15,16 +16,18 @@ const Home = () => {
   } = useTimerContext();
   return (
     <Layout>
-      <TimerDisplay time={time} fontSize="7xl" color="white" />
-      <TimerControls
-        timerRunning={timerRunning}
-        toggleTimer={toggleTimer}
-        handleReset={handleReset}
-      />
-      <IntervalSelector
-        selectedTime={selectedTime}
-        handleSetTime={handleSetTime}
-      />
+      <Flex direction="column" alignItems="center">
+        <TimerDisplay time={time} fontSize="7xl" color="white" />
+        <TimerControls
+          timerRunning={timerRunning}
+          toggleTimer={toggleTimer}
+          handleReset={handleReset}
+        />
+        <IntervalSelector
+          selectedTime={selectedTime}
+          handleSetTime={handleSetTime}
+        />
+      </Flex>
     </Layout>
   );
 };
