@@ -4,6 +4,9 @@ import { SettingsData } from 'main/store';
 declare global {
   interface Window {
     electron: {
+      minimize: () => void;
+      maximize: () => void;
+      close: () => void;
       storeSettings: (setting: SettingsData) => Promise<SettingsData>;
       getSettings: () => Promise<SettingsData>;
       saveSetting: ({

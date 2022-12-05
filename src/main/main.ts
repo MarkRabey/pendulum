@@ -44,6 +44,18 @@ ipcMain.on(
   }
 );
 
+ipcMain.handle('app:minimize', () => {
+  mainWindow?.minimize();
+});
+
+ipcMain.handle('app:maximize', () => {
+  mainWindow?.maximize();
+});
+
+ipcMain.handle('app:close', () => {
+  mainWindow?.close();
+});
+
 ipcMain.handle('store:getSettings', async () => {
   const settings = store.get(STORE_KEYS.SETTINGS);
   return settings;
@@ -115,9 +127,9 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
-    frame: false,
+    width: 630,
+    height: 350,
+    title: 'Pendulum',
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged

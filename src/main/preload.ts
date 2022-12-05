@@ -9,6 +9,9 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('notify', message);
     },
   },
+  minimize: () => ipcRenderer.invoke('app:minimize'),
+  maximize: () => ipcRenderer.invoke('app:maximize'),
+  close: () => ipcRenderer.invoke('app:close'),
   storeSettings: async (settings: SettingsData) =>
     ipcRenderer.invoke('store:settings', settings),
   saveSetting: async ({ key, value }: { key: string; value: any }) =>
