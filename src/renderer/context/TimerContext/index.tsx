@@ -1,5 +1,10 @@
-import { Button } from '@chakra-ui/react';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 export type TimerContextType = {
   selectedTime: number;
@@ -19,6 +24,7 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   const [time, setTime] = useState(10);
   const [timerRunning, setTimerRunning] = useState(false);
   const [pomodoroMode, setPomodoroMode] = useState(false);
+  const [pomodoroCooldown, setPomodoroCooldown] = useState(false);
 
   const toggleTimer = () => {
     setTimerRunning(!timerRunning);
@@ -30,19 +36,31 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     setTime(value);
   };
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setTime(selectedTime);
     setTimerRunning(false);
-  };
+    setPomodoroCooldown(false);
+  }, [selectedTime]);
 
   const handleTogglePomodoroMode = () => {
     setPomodoroMode(!pomodoroMode);
     handleReset();
   };
 
-  const handleTimerComplete = (message = 'Timer finished') => {
+  const sendNotification = (message = 'Timer finished') => {
     electron.ipcRenderer.sendMessage('notify', { message });
   };
+
+  const handlePomodoroComplete = useCallback(() => {
+    if (pomodoroCooldown) {
+      handleReset();
+    } else {
+      sendNotification('5 minute cooldown');
+      setPomodoroCooldown(true);
+      setTime(300); // 5 minute cooldown
+      setTimerRunning(true);
+    }
+  }, [handleReset, pomodoroCooldown]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -52,13 +70,18 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         } else if (time === 0) {
           clearInterval(interval);
           setTimerRunning(false);
-          handleTimerComplete();
+          if (pomodoroMode) {
+            handlePomodoroComplete();
+          } else {
+            handleReset();
+            sendNotification();
+          }
         }
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [time, timerRunning]);
+  }, [handlePomodoroComplete, handleReset, pomodoroMode, time, timerRunning]);
 
   return (
     <TimerContext.Provider
@@ -73,7 +96,6 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         handleTogglePomodoroMode,
       }}
     >
-      <Button onClick={() => handleTimerComplete('Testing')}>Notify</Button>
       {children}
     </TimerContext.Provider>
   );
