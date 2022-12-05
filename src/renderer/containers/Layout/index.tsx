@@ -1,4 +1,5 @@
-import { Flex, Heading } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import Header from 'renderer/components/Header';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ const Layout = ({ children }: LayoutProps) => {
       alignItems="center"
       flexDirection="column"
     >
-      <Heading color="white">Pendulum</Heading>
+      <Header />
       {children}
     </Flex>
   );
