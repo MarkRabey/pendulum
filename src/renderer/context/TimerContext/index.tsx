@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export type TimerContextType = {
@@ -39,6 +40,10 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     handleReset();
   };
 
+  const handleTimerComplete = (message = 'Timer finished') => {
+    electron.ipcRenderer.sendMessage('notify', { message });
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (timerRunning) {
@@ -46,6 +51,8 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
           setTime(time - 1);
         } else if (time === 0) {
           clearInterval(interval);
+          setTimerRunning(false);
+          handleTimerComplete();
         }
       }
     }, 1000);
@@ -66,6 +73,7 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         handleTogglePomodoroMode,
       }}
     >
+      <Button onClick={() => handleTimerComplete('Testing')}>Notify</Button>
       {children}
     </TimerContext.Provider>
   );
