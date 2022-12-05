@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import notifications from 'renderer/ultils/notifications';
+import notifications from 'renderer/utils/notifications';
 import { useSettignsContext } from '../SettingsContext';
 
 export type TimerContextType = {

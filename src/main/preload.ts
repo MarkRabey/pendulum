@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { SettingsData } from './store';
 
-export type Channels = 'ipc-example';
+export type Channels = 'ipc-example' | 'notify';
 
 contextBridge.exposeInMainWorld('electron', {
   notificationApi: {
@@ -8,6 +9,11 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('notify', message);
     },
   },
+  storeSettings: async (settings: SettingsData) =>
+    ipcRenderer.invoke('store:settings', settings),
+  saveSetting: async ({ key, value }: { key: string; value: any }) =>
+    ipcRenderer.invoke('store:saveSetting', { key, value }),
+  getSettings: async () => ipcRenderer.invoke('store:getSettings'),
   ipcRenderer: {
     sendMessage(channel: Channels, args: unknown[]) {
       ipcRenderer.send(channel, args);

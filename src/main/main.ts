@@ -13,6 +13,7 @@ import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import path from 'path';
 import MenuBuilder from './menu';
+import store, { SettingsData, STORE_KEYS } from './store';
 import { resolveHtmlPath } from './util';
 
 class AppUpdater {
@@ -40,6 +41,37 @@ ipcMain.on(
   'notify',
   (_, { title = 'Pedulum', message }: NotificationOptions) => {
     new Notification({ title, body: message }).show();
+  }
+);
+
+ipcMain.handle('store:getSettings', async () => {
+  const settings = store.get(STORE_KEYS.SETTINGS);
+  return settings;
+});
+
+ipcMain.handle(
+  'store:saveSetting',
+  async (_, { key, value }: { key: keyof SettingsData; value: any }) => {
+    const currentSettings = store.get(STORE_KEYS.SETTINGS);
+    store.set(STORE_KEYS.SETTINGS, {
+      ...currentSettings,
+      [key]: value,
+    });
+  }
+);
+
+ipcMain.handle(
+  'store:settings',
+  async (_, newSettings: Partial<SettingsData>) => {
+    console.log({ newSettings });
+
+    const prevSettings = store.get(STORE_KEYS.SETTINGS);
+    const result = store.set(STORE_KEYS.SETTINGS, {
+      ...prevSettings,
+      ...newSettings,
+    });
+
+    return result;
   }
 );
 
