@@ -1,8 +1,8 @@
 import { FormControl, FormLabel, Switch } from '@chakra-ui/react';
-import { useTimerContext } from 'renderer/context/TimerContext';
+import { useSettignsContext } from 'renderer/context/SettingsContext';
 
 const SettingsControls = () => {
-  const { pomodoroMode, handleTogglePomodoroMode } = useTimerContext();
+  const { pomodoroMode, handleSetPomodoroMode } = useSettignsContext();
 
   return (
     <>
@@ -11,7 +11,7 @@ const SettingsControls = () => {
         <Switch
           size="lg"
           defaultChecked={pomodoroMode}
-          onChange={handleTogglePomodoroMode}
+          onChange={() => handleSetPomodoroMode(!pomodoroMode)}
         />
       </FormControl>
     </>
