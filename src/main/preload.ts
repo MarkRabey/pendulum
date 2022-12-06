@@ -16,7 +16,10 @@ contextBridge.exposeInMainWorld('electron', {
   storeSettings: async (settings: SettingsData) =>
     ipcRenderer.invoke('store:settings', settings),
   saveSetting: async ({ key, value }: { key: string; value: any }) =>
-    ipcRenderer.invoke('store:saveSetting', { key, value }),
+    Promise.all([
+      ipcRenderer.invoke('store:saveSetting', { key, value }),
+      ipcRenderer.invoke('timer:update-tray'),
+    ]),
   getSettings: async () => ipcRenderer.invoke('store:getSettings'),
   ipcRenderer: {
     sendMessage(channel: Channels, args: unknown[]) {

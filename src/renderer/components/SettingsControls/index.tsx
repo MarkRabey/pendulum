@@ -65,15 +65,6 @@ const SettingsControls = () => {
       </FormControl>
 
       <FormControl display="flex">
-        <FormLabel>Enable Pomodoro Mode?</FormLabel>
-        <Switch
-          size="lg"
-          defaultChecked={pomodoroMode}
-          onChange={() => handleSetPomodoroMode(!pomodoroMode)}
-        />
-      </FormControl>
-
-      <FormControl display="flex">
         <FormLabel>Timer Interval</FormLabel>
         <Select
           variant="filled"
@@ -113,6 +104,15 @@ const SettingsControls = () => {
           <option value="light">Light</option>
           <option value="dark">Dark</option>
         </Select>
+      </FormControl>
+
+      <FormControl display="flex">
+        <FormLabel>Enable Pomodoro Mode?</FormLabel>
+        <Switch
+          size="lg"
+          defaultChecked={pomodoroMode}
+          onChange={() => handleSetPomodoroMode(!pomodoroMode)}
+        />
       </FormControl>
     </Stack>
   );

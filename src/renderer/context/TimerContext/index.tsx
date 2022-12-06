@@ -18,7 +18,7 @@ export type TimerContextType = {
 export const TimerContext = createContext<TimerContextType | null>(null);
 
 const TimerProvider = ({ children }: { children: React.ReactNode }) => {
-  const { pomodoroMode, pomodoroInterval, pomodoroBreakInterval } =
+  const { pomodoroMode, pomodoroInterval, pomodoroBreakInterval, showInMenu } =
     useSettingsContext();
   const [time, setTime] = useState(pomodoroInterval);
   const [timerRunning, setTimerRunning] = useState(false);
@@ -67,8 +67,10 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   }, [handlePomodoroComplete, handleReset, pomodoroMode, time, timerRunning]);
 
   useEffect(() => {
-    window.electron.setTime(time);
-  }, [time]);
+    if (showInMenu) {
+      window.electron.setTime(time);
+    }
+  }, [time, showInMenu]);
 
   useEffect(() => {
     if (!timerRunning) {

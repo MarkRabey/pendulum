@@ -9,6 +9,15 @@ import { resolveHtmlPath } from './util';
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
+ipcMain.handle('timer:update-tray', async () => {
+  if (tray) {
+    const settings = store.get(STORE_KEYS.SETTINGS);
+    if (!settings.showInMenu) {
+      tray.setTitle('');
+    }
+  }
+});
+
 ipcMain.handle('timer:set-time', async (_, time: number) => {
   if (tray) {
     const settings = store.get(STORE_KEYS.SETTINGS);
