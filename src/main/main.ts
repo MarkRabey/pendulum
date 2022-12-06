@@ -1,96 +1,19 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `npm run build` or `npm run build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
-import { app, BrowserWindow, ipcMain, Notification, shell } from 'electron';
-import log from 'electron-log';
-import { autoUpdater } from 'electron-updater';
+import { app, BrowserWindow, Rectangle, shell, Tray } from 'electron';
 import path from 'path';
-import MenuBuilder from './menu';
-import store, { SettingsData, STORE_KEYS } from './store';
+import './ipc';
 import { resolveHtmlPath } from './util';
 
-class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
-
 let mainWindow: BrowserWindow | null = null;
+let tray: Tray | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets');
 
-interface NotificationOptions {
-  title?: string;
-  message: string;
-}
-
-ipcMain.on(
-  'notify',
-  (_, { title = 'Pedulum', message }: NotificationOptions) => {
-    new Notification({ title, body: message }).show();
-  }
-);
-
-ipcMain.handle('app:minimize', () => {
-  mainWindow?.minimize();
-});
-
-ipcMain.handle('app:maximize', () => {
-  mainWindow?.maximize();
-});
-
-ipcMain.handle('app:close', () => {
-  mainWindow?.close();
-});
-
-ipcMain.handle('store:getSettings', async () => {
-  const settings = store.get(STORE_KEYS.SETTINGS);
-  return settings;
-});
-
-ipcMain.handle(
-  'store:saveSetting',
-  async (_, { key, value }: { key: keyof SettingsData; value: any }) => {
-    const currentSettings = store.get(STORE_KEYS.SETTINGS);
-    store.set(STORE_KEYS.SETTINGS, {
-      ...currentSettings,
-      [key]: value,
-    });
-  }
-);
-
-ipcMain.handle(
-  'store:settings',
-  async (_, newSettings: Partial<SettingsData>) => {
-    console.log({ newSettings });
-
-    const prevSettings = store.get(STORE_KEYS.SETTINGS);
-    const result = store.set(STORE_KEYS.SETTINGS, {
-      ...prevSettings,
-      ...newSettings,
-    });
-
-    return result;
-  }
-);
-
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
-}
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
 
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
@@ -98,6 +21,24 @@ const isDebug =
 if (isDebug) {
   require('electron-debug')();
 }
+
+const getWindowPosition = () => {
+  const windowBounds: Rectangle = mainWindow
+    ? mainWindow?.getBounds()
+    : { x: 0, y: 0, width: 16, height: 16 };
+
+  const trayBounds: Rectangle = tray
+    ? tray.getBounds()
+    : { x: 0, y: 0, width: 16, height: 16 };
+
+  const x = Math.round(
+    trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2
+  );
+
+  const y = Math.round(trayBounds.y + trayBounds.height + 4);
+
+  return { x, y };
+};
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -117,78 +58,71 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
   mainWindow = new BrowserWindow({
+    width: 300,
+    height: 450,
     show: false,
-    width: 630,
-    height: 350,
-    title: 'Pendulum',
-    icon: getAssetPath('icon.png'),
+    frame: false,
+    fullscreenable: false,
+    resizable: false,
+    transparent: true,
     webPreferences: {
+      backgroundThrottling: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
+  mainWindow.on('blur', () => {
+    if (!mainWindow?.webContents.isDevToolsOpened()) {
+      mainWindow?.hide();
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
 };
 
-/**
- * Add event listeners...
- */
+const showWindow = () => {
+  const position = getWindowPosition();
+  mainWindow?.setPosition(position.x, position.y, false);
+  mainWindow?.show();
+  mainWindow?.focus();
+};
 
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
+const toggleWindow = () => {
+  if (mainWindow?.isVisible()) {
+    mainWindow.hide();
+  } else {
+    showWindow();
   }
+};
+
+const createTray = () => {
+  tray = new Tray(getAssetPath('icons/16x16.png'));
+  tray.on('right-click', toggleWindow);
+  tray.on('double-click', toggleWindow);
+  tray.on('click', (event) => {
+    toggleWindow();
+    if (mainWindow?.isVisible() && process.defaultApp && event.metaKey) {
+      mainWindow.webContents.openDevTools({ mode: 'detach' });
+    }
+  });
+};
+
+app.dock.hide();
+
+app.on('ready', () => {
+  createTray();
+  createWindow();
 });
 
-app
-  .whenReady()
-  .then(() => {
-    createWindow();
-    app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) createWindow();
-    });
-  })
-  .catch(console.log);
+app.on('window-all-closed', () => {
+  // if (process.platform !== 'darwin') {
+  app.quit();
+  // }
+});
