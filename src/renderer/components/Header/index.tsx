@@ -1,16 +1,12 @@
-import { Flex, Icon, Link } from '@chakra-ui/react';
-import { MdHome, MdSettings } from 'react-icons/md';
-import { Link as RouterLink } from 'react-router-dom';
+import { Flex } from '@chakra-ui/react';
+import ReportsModal from 'renderer/containers/ReportsModal';
+import SettingsModal from 'renderer/containers/SettingsModal';
 
 const Header = () => {
   return (
-    <Flex justifyContent="space-between" p={2} width="100%">
-      <Link as={RouterLink} to="/">
-        <Icon color="gray.400" fontSize={24} as={MdHome} />
-      </Link>
-      <Link as={RouterLink} to="/settings">
-        <Icon color="gray.400" fontSize={24} as={MdSettings} />
-      </Link>
+    <Flex justifyContent="flex-end" p={4} width="100%">
+      <ReportsModal />
+      <SettingsModal />
     </Flex>
   );
 };
