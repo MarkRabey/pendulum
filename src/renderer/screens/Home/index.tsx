@@ -9,7 +9,7 @@ const Home = () => {
   return (
     <Layout>
       <Flex direction="column" alignItems="center">
-        <TimerDisplay time={time} fontSize="7xl" color="white" />
+        <TimerDisplay time={time} fontSize="7xl" />
         <TimerControls
           timerRunning={timerRunning}
           toggleTimer={toggleTimer}

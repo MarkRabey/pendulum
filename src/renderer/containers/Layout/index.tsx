@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import Header from 'renderer/components/Header';
 
 interface LayoutProps {
@@ -6,9 +6,11 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const backgroundColor = useColorModeValue('white', 'gray.700');
   return (
     <Flex
-      background="gray.700"
+      border="none"
+      background={backgroundColor}
       height="100%"
       alignItems="center"
       flexDirection="column"

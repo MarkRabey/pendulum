@@ -4,6 +4,7 @@ import {
   Select,
   Stack,
   Switch,
+  useColorMode,
 } from '@chakra-ui/react';
 import { ChangeEvent } from 'react';
 import { useSettingsContext } from 'renderer/context/SettingsContext';
@@ -32,6 +33,7 @@ const intervalOptions = [
 ];
 
 const SettingsControls = () => {
+  const { colorMode, setColorMode } = useColorMode();
   const {
     pomodoroMode,
     handleSetPomodoroMode,
@@ -54,7 +56,7 @@ const SettingsControls = () => {
   return (
     <Stack>
       <FormControl display="flex">
-        <FormLabel color="white">Show in menu?</FormLabel>
+        <FormLabel>Show in menu?</FormLabel>
         <Switch
           size="lg"
           defaultChecked={showInMenu}
@@ -63,7 +65,7 @@ const SettingsControls = () => {
       </FormControl>
 
       <FormControl display="flex">
-        <FormLabel color="white">Enable Pomodoro Mode?</FormLabel>
+        <FormLabel>Enable Pomodoro Mode?</FormLabel>
         <Switch
           size="lg"
           defaultChecked={pomodoroMode}
@@ -72,7 +74,7 @@ const SettingsControls = () => {
       </FormControl>
 
       <FormControl display="flex">
-        <FormLabel color="white">Timer Interval</FormLabel>
+        <FormLabel>Timer Interval</FormLabel>
         <Select
           variant="filled"
           onChange={handleChangeInterval}
@@ -87,7 +89,7 @@ const SettingsControls = () => {
       </FormControl>
 
       <FormControl display="flex">
-        <FormLabel color="white">Break Interval</FormLabel>
+        <FormLabel>Break Interval</FormLabel>
         <Select
           variant="filled"
           onChange={handleChangeBreakInterval}
@@ -98,6 +100,18 @@ const SettingsControls = () => {
               {option.label}
             </option>
           ))}
+        </Select>
+      </FormControl>
+
+      <FormControl display="flex">
+        <FormLabel>Display</FormLabel>
+        <Select
+          variant="filled"
+          onChange={(e) => setColorMode(e.target.value)}
+          value={colorMode}
+        >
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
         </Select>
       </FormControl>
     </Stack>

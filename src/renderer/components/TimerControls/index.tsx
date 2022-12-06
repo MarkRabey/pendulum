@@ -13,12 +13,7 @@ const TimerControls = ({
   handleReset,
 }: TimerControlsProps) => (
   <Flex>
-    <Button
-      width="7rem"
-      background="tomato"
-      color="white"
-      onClick={toggleTimer}
-    >
+    <Button width="7rem" background="tomato" onClick={toggleTimer}>
       {!timerRunning ? 'Start' : 'Pause'}
     </Button>
     <ConfirmDialog
@@ -27,7 +22,6 @@ const TimerControls = ({
         background: 'blue.300',
         marginX: 5,
         disabled: !timerRunning,
-        color: 'white',
       }}
       confirmColorScheme="blue"
       confirmLabel="Reset"
