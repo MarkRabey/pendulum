@@ -1,6 +1,15 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
-import { app, BrowserWindow, ipcMain, Rectangle, shell, Tray } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  Rectangle,
+  shell,
+  Tray,
+} from 'electron';
 import path from 'path';
+import pkg from '../../package.json';
 import formatTimer from '../shared/utils/formatTimer';
 import './ipc';
 import store, { STORE_KEYS } from './store';
@@ -126,7 +135,26 @@ const toggleWindow = () => {
 
 const createTray = () => {
   tray = new Tray(getAssetPath('icons/16x16.png'));
-  tray.on('right-click', toggleWindow);
+  tray.setToolTip('Pendulem');
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'About Pendulum',
+      click: () => {
+        app.showAboutPanel();
+      },
+    },
+    {
+      label: 'Quit',
+      click: () => {
+        app.quit();
+      },
+    },
+  ]);
+
+  tray.on('right-click', () => {
+    mainWindow?.hide();
+    tray?.popUpContextMenu(menu);
+  });
   tray.on('double-click', toggleWindow);
   tray.on('click', (event) => {
     toggleWindow();
@@ -137,6 +165,14 @@ const createTray = () => {
 };
 
 app.dock.hide();
+
+app.setAboutPanelOptions({
+  applicationName: pkg.displayName,
+  applicationVersion: pkg.version,
+  version: pkg.version,
+  website: 'https://markrabey.com',
+  copyright: '© 2022 Mark Rabey',
+});
 
 app.on('ready', () => {
   createTray();
