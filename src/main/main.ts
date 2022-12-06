@@ -12,6 +12,7 @@ import path from 'path';
 import pkg from '../../package.json';
 import formatTimer from '../shared/utils/formatTimer';
 import './ipc';
+import MenuBuilder from './menu';
 import store, { STORE_KEYS } from './store';
 import { resolveHtmlPath } from './util';
 
@@ -45,6 +46,11 @@ const RESOURCES_PATH = app.isPackaged
 const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
+
+if (process.env.NODE_ENV === 'production') {
+  const sourceMapSupport = require('source-map-support');
+  sourceMapSupport.install();
+}
 
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
@@ -90,13 +96,9 @@ const createWindow = async () => {
   }
 
   mainWindow = new BrowserWindow({
-    width: 300,
-    height: 450,
+    width: 360,
+    height: 560,
     show: false,
-    frame: false,
-    fullscreenable: false,
-    resizable: false,
-    transparent: true,
     webPreferences: {
       backgroundThrottling: false,
       preload: app.isPackaged
@@ -106,11 +108,23 @@ const createWindow = async () => {
   });
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('blur', () => {
-    if (!mainWindow?.webContents.isDevToolsOpened()) {
-      mainWindow?.hide();
+  mainWindow.on('ready-to-show', () => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      mainWindow.minimize();
+    } else {
+      mainWindow.show();
     }
   });
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
+
+  const menuBuilder = new MenuBuilder(mainWindow);
+  menuBuilder.buildMenu();
 
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
@@ -119,18 +133,10 @@ const createWindow = async () => {
 };
 
 const showWindow = () => {
-  const position = getWindowPosition();
-  mainWindow?.setPosition(position.x, position.y, false);
+  // const position = getWindowPosition();
+  // // mainWindow?.setPosition(position.x, position.y, false);
   mainWindow?.show();
   mainWindow?.focus();
-};
-
-const toggleWindow = () => {
-  if (mainWindow?.isVisible()) {
-    mainWindow.hide();
-  } else {
-    showWindow();
-  }
 };
 
 const createTray = () => {
@@ -138,33 +144,34 @@ const createTray = () => {
   tray.setToolTip('Pendulem');
   const menu = Menu.buildFromTemplate([
     {
-      label: 'About Pendulum',
-      click: () => {
-        app.showAboutPanel();
-      },
+      label: `Show`,
+      click: showWindow,
     },
     {
+      label: 'About',
+      role: 'about',
+    },
+    { type: 'separator' },
+    {
       label: 'Quit',
-      click: () => {
-        app.quit();
-      },
+      role: 'quit',
     },
   ]);
 
-  tray.on('right-click', () => {
-    mainWindow?.hide();
-    tray?.popUpContextMenu(menu);
-  });
-  tray.on('double-click', toggleWindow);
-  tray.on('click', (event) => {
-    toggleWindow();
-    if (mainWindow?.isVisible() && process.defaultApp && event.metaKey) {
-      mainWindow.webContents.openDevTools({ mode: 'detach' });
-    }
-  });
-};
+  tray.setContextMenu(menu);
 
-app.dock.hide();
+  // tray.on('right-click', () => {
+  //   mainWindow?.hide();
+  //   tray?.popUpContextMenu(menu);
+  // });
+  // tray.on('double-click', toggleWindow);
+  // tray.on('click', (event) => {
+  //   toggleWindow();
+  //   if (mainWindow?.isVisible() && process.defaultApp && event.metaKey) {
+  //     mainWindow.webContents.openDevTools({ mode: 'detach' });
+  //   }
+  // });
+};
 
 app.setAboutPanelOptions({
   applicationName: pkg.displayName,
@@ -180,7 +187,7 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', () => {
-  // if (process.platform !== 'darwin') {
-  app.quit();
-  // }
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });

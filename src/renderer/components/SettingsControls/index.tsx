@@ -1,8 +1,8 @@
 import {
+  Flex,
   FormControl,
   FormLabel,
   Select,
-  Stack,
   Switch,
   useColorMode,
 } from '@chakra-ui/react';
@@ -54,9 +54,9 @@ const SettingsControls = () => {
   };
 
   return (
-    <Stack>
-      <FormControl display="flex">
-        <FormLabel>Show in menu?</FormLabel>
+    <Flex direction="column" width="100%">
+      <FormControl justifyContent="space-between" my={4}>
+        <FormLabel flex={1}>Show in menu?</FormLabel>
         <Switch
           size="lg"
           defaultChecked={showInMenu}
@@ -64,9 +64,10 @@ const SettingsControls = () => {
         />
       </FormControl>
 
-      <FormControl display="flex">
-        <FormLabel>Timer Interval</FormLabel>
+      <FormControl justifyContent="space-between" my={4}>
+        <FormLabel flex={1}>Timer Interval</FormLabel>
         <Select
+          flex={1}
           variant="filled"
           onChange={handleChangeInterval}
           value={pomodoroInterval}
@@ -79,9 +80,10 @@ const SettingsControls = () => {
         </Select>
       </FormControl>
 
-      <FormControl display="flex">
-        <FormLabel>Break Interval</FormLabel>
+      <FormControl my={4}>
+        <FormLabel flex={1}>Break Interval</FormLabel>
         <Select
+          flex={1}
           variant="filled"
           onChange={handleChangeBreakInterval}
           value={pomodoroBreakInterval}
@@ -94,8 +96,8 @@ const SettingsControls = () => {
         </Select>
       </FormControl>
 
-      <FormControl display="flex">
-        <FormLabel>Display</FormLabel>
+      <FormControl my={4}>
+        <FormLabel flex={1}>Display Mode</FormLabel>
         <Select
           variant="filled"
           onChange={(e) => setColorMode(e.target.value)}
@@ -106,7 +108,7 @@ const SettingsControls = () => {
         </Select>
       </FormControl>
 
-      <FormControl display="flex">
+      <FormControl my={4}>
         <FormLabel>Enable Pomodoro Mode?</FormLabel>
         <Switch
           size="lg"
@@ -114,7 +116,7 @@ const SettingsControls = () => {
           onChange={() => handleSetPomodoroMode(!pomodoroMode)}
         />
       </FormControl>
-    </Stack>
+    </Flex>
   );
 };
 
