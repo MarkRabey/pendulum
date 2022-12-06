@@ -4,6 +4,7 @@ export interface SettingsData {
   pomodoroMode: boolean;
   pomodoroInterval: number;
   pomodoroBreakInterval: number;
+  showInMenu: boolean;
 }
 
 export type SchemaType = {
@@ -17,8 +18,14 @@ const schema: Schema<SchemaType> = {
       pomodoroMode: { type: 'boolean', default: false },
       pomodoroInterval: { type: 'number', default: 1500 },
       pomodoroBreakInterval: { type: 'number', default: 300 },
+      showInMenu: { type: 'boolean', default: false },
     },
-    required: ['pomodoroMode', 'pomodoroInterval', 'pomodoroBreakInterval'],
+    required: [
+      'pomodoroMode',
+      'pomodoroInterval',
+      'pomodoroBreakInterval',
+      'showInMenu',
+    ],
     additionalProperties: false,
   },
 };

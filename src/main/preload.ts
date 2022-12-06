@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electron', {
   minimize: () => ipcRenderer.invoke('app:minimize'),
   maximize: () => ipcRenderer.invoke('app:maximize'),
   close: () => ipcRenderer.invoke('app:close'),
+  setTime: (time: number) => ipcRenderer.invoke('timer:set-time', time),
   storeSettings: async (settings: SettingsData) =>
     ipcRenderer.invoke('store:settings', settings),
   saveSetting: async ({ key, value }: { key: string; value: any }) =>

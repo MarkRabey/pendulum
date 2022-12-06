@@ -6,6 +6,8 @@ export type SettingsContextType = {
   handleSetPomodoroMode: (value: boolean) => void;
   pomodoroCooldown: boolean;
   handleSetPomodoroCooldown: (value: boolean) => void;
+  showInMenu: boolean;
+  handleSetShowInMenu: (value: boolean) => void;
 };
 
 export const SettingsContext = createContext<SettingsContextType | null>(null);
@@ -15,6 +17,7 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
   const [pomodoroInterval, setPomodoroInterval] = useState(1500);
   const [pomodoroBreakInterval, setPomodoroBreakInterval] = useState(300);
   const [pomodoroCooldown, setPomodoroCooldown] = useState(false);
+  const [showInMenu, setShowInMenu] = useState(false);
 
   const saveSetting = async (
     key: keyof SettingsData,
@@ -31,6 +34,7 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
     setPomodoroMode(settings.pomodoroMode);
     setPomodoroInterval(settings.pomodoroInterval);
     setPomodoroBreakInterval(settings.pomodoroBreakInterval);
+    setShowInMenu(settings.showInMenu);
   };
 
   const handleSetPomodoroMode = (value: boolean) => {
@@ -40,6 +44,11 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleSetPomodoroCooldown = (value: boolean) => {
     setPomodoroCooldown(value);
+  };
+
+  const handleSetShowInMenu = (value: boolean) => {
+    setShowInMenu(value);
+    saveSetting('showInMenu', value);
   };
 
   useEffect(() => {
@@ -53,6 +62,8 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
         handleSetPomodoroMode,
         pomodoroCooldown,
         handleSetPomodoroCooldown,
+        showInMenu,
+        handleSetShowInMenu,
       }}
     >
       {children}
@@ -62,7 +73,7 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
 
 export default SettingsProvider;
 
-export const useSettignsContext = () => {
+export const useSettingsContext = () => {
   const contextValues = useContext(SettingsContext) as SettingsContextType;
 
   return {

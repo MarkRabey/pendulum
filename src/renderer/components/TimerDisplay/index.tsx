@@ -1,4 +1,5 @@
 import { Text, TextProps } from '@chakra-ui/react';
+import formatTimer from 'shared/utils/formatTimer';
 
 interface TimerDisplayProps extends TextProps {
   time: number;
@@ -11,11 +12,7 @@ const TimerDisplay = ({
   fontWeight = 'bold',
 }: TimerDisplayProps) => (
   <Text fontWeight={fontWeight} fontSize={fontSize} color={color} as="kbd">
-    {`${
-      Math.floor(time / 60) < 10
-        ? `0${Math.floor(time / 60)}`
-        : `${Math.floor(time / 60)}`
-    }:${time % 60 < 10 ? `0${time % 60}` : time % 60}`}
+    {formatTimer(time)}
   </Text>
 );
 

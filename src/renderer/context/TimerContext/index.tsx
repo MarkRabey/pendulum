@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import notifications from 'renderer/utils/notifications';
-import { useSettignsContext } from '../SettingsContext';
+import { useSettingsContext } from '../SettingsContext';
 
 export type TimerContextType = {
   selectedTime: number;
@@ -21,7 +21,7 @@ export const TimerContext = createContext<TimerContextType | null>(null);
 
 const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   const { pomodoroMode, pomodoroCooldown, handleSetPomodoroCooldown } =
-    useSettignsContext();
+    useSettingsContext();
   const [selectedTime, setSelectedTime] = useState(10);
   const [time, setTime] = useState(10);
   const [timerRunning, setTimerRunning] = useState(false);
@@ -73,6 +73,10 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => clearInterval(interval);
   }, [handlePomodoroComplete, handleReset, pomodoroMode, time, timerRunning]);
+
+  useEffect(() => {
+    window.electron.setTime(time);
+  }, [time]);
 
   return (
     <TimerContext.Provider

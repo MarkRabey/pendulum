@@ -9,6 +9,7 @@ declare global {
       close: () => void;
       storeSettings: (setting: SettingsData) => Promise<SettingsData>;
       getSettings: () => Promise<SettingsData>;
+      setTime: (time: number) => void;
       saveSetting: ({
         key,
         value,

@@ -1,11 +1,22 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
-import { app, BrowserWindow, Rectangle, shell, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Rectangle, shell, Tray } from 'electron';
 import path from 'path';
+import formatTimer from '../shared/utils/formatTimer';
 import './ipc';
+import store, { STORE_KEYS } from './store';
 import { resolveHtmlPath } from './util';
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
+
+ipcMain.handle('timer:set-time', async (_, time: number) => {
+  if (tray) {
+    const settings = store.get(STORE_KEYS.SETTINGS);
+    if (settings.showInMenu) {
+      tray.setTitle(formatTimer(time));
+    }
+  }
+});
 
 const RESOURCES_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'assets')
