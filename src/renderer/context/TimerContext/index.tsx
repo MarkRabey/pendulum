@@ -18,9 +18,9 @@ export type TimerContextType = {
 export const TimerContext = createContext<TimerContextType | null>(null);
 
 const TimerProvider = ({ children }: { children: React.ReactNode }) => {
-  const { pomodoroMode, pomodoroInterval, pomodoroBreakInterval, showInMenu } =
+  const { autoStartPomodoros, pomodoroTime, shortBreakTime, showInMenu } =
     useSettingsContext();
-  const [time, setTime] = useState(pomodoroInterval);
+  const [time, setTime] = useState(pomodoroTime);
   const [timerRunning, setTimerRunning] = useState(false);
   const [pomodoroCooldown, setPomodoroCooldown] = useState(false);
 
@@ -29,10 +29,10 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleReset = useCallback(() => {
-    setTime(pomodoroInterval);
+    setTime(pomodoroTime);
     setTimerRunning(false);
     setPomodoroCooldown(false);
-  }, [pomodoroInterval]);
+  }, [pomodoroTime]);
 
   const handlePomodoroComplete = useCallback(() => {
     if (pomodoroCooldown) {
@@ -40,10 +40,10 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       notifications.sendNotification('Cooldown');
       setPomodoroCooldown(true);
-      setTime(pomodoroBreakInterval); // 5 minute cooldown
+      setTime(shortBreakTime); // 5 minute cooldown
       setTimerRunning(true);
     }
-  }, [handleReset, pomodoroCooldown, pomodoroBreakInterval]);
+  }, [handleReset, pomodoroCooldown, shortBreakTime]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,7 +53,7 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         } else if (time === 0) {
           clearInterval(interval);
           setTimerRunning(false);
-          if (pomodoroMode) {
+          if (autoStartPomodoros) {
             handlePomodoroComplete();
           } else {
             handleReset();
@@ -64,7 +64,13 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [handlePomodoroComplete, handleReset, pomodoroMode, time, timerRunning]);
+  }, [
+    handlePomodoroComplete,
+    handleReset,
+    autoStartPomodoros,
+    time,
+    timerRunning,
+  ]);
 
   useEffect(() => {
     if (showInMenu) {
@@ -76,7 +82,7 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     if (!timerRunning) {
       handleReset();
     }
-  }, [handleReset, pomodoroInterval, timerRunning]);
+  }, [handleReset, pomodoroTime, timerRunning]);
 
   return (
     <TimerContext.Provider

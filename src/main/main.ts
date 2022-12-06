@@ -19,6 +19,11 @@ import { resolveHtmlPath } from './util';
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
+ipcMain.handle('store:getSettings', async () => {
+  const settings = store.get(STORE_KEYS.SETTINGS);
+  return settings;
+});
+
 ipcMain.handle('timer:update-tray', async () => {
   if (tray) {
     const settings = store.get(STORE_KEYS.SETTINGS);
@@ -96,8 +101,8 @@ const createWindow = async () => {
   }
 
   mainWindow = new BrowserWindow({
-    width: 360,
-    height: 560,
+    width: 560,
+    height: 800,
     show: false,
     webPreferences: {
       backgroundThrottling: false,

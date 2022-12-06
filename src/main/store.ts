@@ -1,9 +1,12 @@
 import Store, { Schema } from 'electron-store';
 
 export interface SettingsData {
-  pomodoroMode: boolean;
-  pomodoroInterval: number;
-  pomodoroBreakInterval: number;
+  pomodoroTime: number;
+  shortBreakTime: number;
+  longBreakTime: number;
+  longBreakInterval: number;
+  autoStartBreaks: boolean;
+  autoStartPomodoros: boolean;
   showInMenu: boolean;
 }
 
@@ -15,15 +18,21 @@ const schema: Schema<SchemaType> = {
   settings: {
     type: 'object',
     properties: {
-      pomodoroMode: { type: 'boolean', default: false },
-      pomodoroInterval: { type: 'number', default: 1500 },
-      pomodoroBreakInterval: { type: 'number', default: 300 },
+      pomodoroTime: { type: 'number', default: 1500 },
+      shortBreakTime: { type: 'number', default: 300 },
+      longBreakTime: { type: 'number', default: 900 },
+      longBreakInterval: { type: 'number', default: 4 },
+      autoStartBreaks: { type: 'boolean', default: false },
+      autoStartPomodoros: { type: 'boolean', default: false },
       showInMenu: { type: 'boolean', default: false },
     },
     required: [
-      'pomodoroMode',
-      'pomodoroInterval',
-      'pomodoroBreakInterval',
+      'pomodoroTime',
+      'shortBreakTime',
+      'longBreakTime',
+      'longBreakInterval',
+      'autoStartBreaks',
+      'autoStartPomodoros',
       'showInMenu',
     ],
     additionalProperties: false,

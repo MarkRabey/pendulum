@@ -19,11 +19,6 @@ ipcMain.on(
   }
 );
 
-ipcMain.handle('store:getSettings', async () => {
-  const settings = store.get(STORE_KEYS.SETTINGS);
-  return settings;
-});
-
 ipcMain.handle(
   'store:saveSetting',
   async (_, { key, value }: { key: keyof SettingsData; value: any }) => {
