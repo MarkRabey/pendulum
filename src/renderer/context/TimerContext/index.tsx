@@ -9,49 +9,41 @@ import notifications from 'renderer/utils/notifications';
 import { useSettingsContext } from '../SettingsContext';
 
 export type TimerContextType = {
-  selectedTime: number;
   time: number;
   timerRunning: boolean;
   toggleTimer: () => void;
-  handleSetTime: (value: number) => void;
   handleReset: () => void;
 };
 
 export const TimerContext = createContext<TimerContextType | null>(null);
 
 const TimerProvider = ({ children }: { children: React.ReactNode }) => {
-  const { pomodoroMode, pomodoroCooldown, handleSetPomodoroCooldown } =
+  const { pomodoroMode, pomodoroInterval, pomodoroBreakInterval } =
     useSettingsContext();
-  const [selectedTime, setSelectedTime] = useState(10);
-  const [time, setTime] = useState(10);
+  const [time, setTime] = useState(pomodoroInterval);
   const [timerRunning, setTimerRunning] = useState(false);
+  const [pomodoroCooldown, setPomodoroCooldown] = useState(false);
 
   const toggleTimer = () => {
     setTimerRunning(!timerRunning);
   };
 
-  const handleSetTime = (value: number) => {
-    setTimerRunning(false);
-    setSelectedTime(value);
-    setTime(value);
-  };
-
   const handleReset = useCallback(() => {
-    setTime(selectedTime);
+    setTime(pomodoroInterval);
     setTimerRunning(false);
-    handleSetPomodoroCooldown(false);
-  }, [handleSetPomodoroCooldown, selectedTime]);
+    setPomodoroCooldown(false);
+  }, [pomodoroInterval]);
 
   const handlePomodoroComplete = useCallback(() => {
     if (pomodoroCooldown) {
       handleReset();
     } else {
-      notifications.sendNotification('5 minute cooldown');
-      handleSetPomodoroCooldown(true);
-      setTime(300); // 5 minute cooldown
+      notifications.sendNotification('Cooldown');
+      setPomodoroCooldown(true);
+      setTime(pomodoroBreakInterval); // 5 minute cooldown
       setTimerRunning(true);
     }
-  }, [handleReset, handleSetPomodoroCooldown, pomodoroCooldown]);
+  }, [handleReset, pomodoroCooldown, pomodoroBreakInterval]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -78,14 +70,18 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     window.electron.setTime(time);
   }, [time]);
 
+  useEffect(() => {
+    if (!timerRunning) {
+      handleReset();
+    }
+  }, [handleReset, pomodoroInterval, timerRunning]);
+
   return (
     <TimerContext.Provider
       value={{
-        selectedTime,
         time,
         timerRunning,
         toggleTimer,
-        handleSetTime,
         handleReset,
       }}
     >

@@ -14,6 +14,8 @@ ipcMain.handle('timer:set-time', async (_, time: number) => {
     const settings = store.get(STORE_KEYS.SETTINGS);
     if (settings.showInMenu) {
       tray.setTitle(formatTimer(time));
+    } else {
+      tray.setTitle('');
     }
   }
 });

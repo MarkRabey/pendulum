@@ -4,8 +4,10 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export type SettingsContextType = {
   pomodoroMode: boolean;
   handleSetPomodoroMode: (value: boolean) => void;
-  pomodoroCooldown: boolean;
-  handleSetPomodoroCooldown: (value: boolean) => void;
+  pomodoroInterval: number;
+  handleSetPomodoroInterval: (value: number) => void;
+  pomodoroBreakInterval: number;
+  handleSetPomodoroBreakInterval: (value: number) => void;
   showInMenu: boolean;
   handleSetShowInMenu: (value: boolean) => void;
 };
@@ -16,7 +18,6 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
   const [pomodoroMode, setPomodoroMode] = useState(false);
   const [pomodoroInterval, setPomodoroInterval] = useState(1500);
   const [pomodoroBreakInterval, setPomodoroBreakInterval] = useState(300);
-  const [pomodoroCooldown, setPomodoroCooldown] = useState(false);
   const [showInMenu, setShowInMenu] = useState(false);
 
   const saveSetting = async (
@@ -42,8 +43,14 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
     saveSetting('pomodoroMode', value);
   };
 
-  const handleSetPomodoroCooldown = (value: boolean) => {
-    setPomodoroCooldown(value);
+  const handleSetPomodoroInterval = (value: number) => {
+    setPomodoroInterval(value);
+    saveSetting('pomodoroInterval', value);
+  };
+
+  const handleSetPomodoroBreakInterval = (value: number) => {
+    setPomodoroBreakInterval(value);
+    saveSetting('pomodoroBreakInterval', value);
   };
 
   const handleSetShowInMenu = (value: boolean) => {
@@ -60,8 +67,10 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         pomodoroMode,
         handleSetPomodoroMode,
-        pomodoroCooldown,
-        handleSetPomodoroCooldown,
+        pomodoroInterval,
+        handleSetPomodoroInterval,
+        pomodoroBreakInterval,
+        handleSetPomodoroBreakInterval,
         showInMenu,
         handleSetShowInMenu,
       }}
