@@ -9,7 +9,8 @@ import { TimerState, useTimerContext } from 'renderer/context/TimerContext';
 
 const Home = () => {
   const [startTime, setStartTime] = useState(0);
-  const [timerColor, setTimerColor] = useState('red.400');
+  const [timerProgress, setTimerProgress] = useState(0);
+  const [timerColor, setTimerColor] = useState('red');
   const {
     time,
     timerRunning,
@@ -23,23 +24,27 @@ const Home = () => {
 
   useEffect(() => {
     if (timerState === TimerState.POMODORO) {
-      setTimerColor('red.400');
+      setTimerColor('purple');
       setStartTime(pomodoroTime);
     } else if (timerState === TimerState.SHORT_BREAK) {
-      setTimerColor('blue.400');
+      setTimerColor('teal');
       setStartTime(shortBreakTime);
     } else if (timerState === TimerState.LONG_BREAK) {
-      setTimerColor('teal.400');
+      setTimerColor('cyan');
       setStartTime(longBreakTime);
     }
   }, [longBreakTime, pomodoroTime, shortBreakTime, timerState]);
+
+  useEffect(() => {
+    setTimerProgress(Math.round((time / startTime) * 100));
+  }, [startTime, time]);
 
   return (
     <Layout timerState={timerState}>
       <Flex
         direction="column"
         alignItems="center"
-        backgroundColor="rgba(255,255,255,0.1)"
+        backgroundColor="blackAlpha.100"
         padding={10}
         borderRadius={8}
       >
@@ -47,7 +52,13 @@ const Home = () => {
           timerState={timerState}
           onChange={handleSetTimerState}
         />
-        <TimerDisplay time={time} startTime={startTime} color={timerColor} />
+        <TimerDisplay
+          value={timerProgress}
+          time={time}
+          color={`${timerColor}.400`}
+          trackColor={`${timerColor}.600`}
+          size={160}
+        />
         <TimerControls
           timerRunning={timerRunning}
           toggleTimer={toggleTimer}

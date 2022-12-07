@@ -9,13 +9,13 @@ interface LayoutProps {
 }
 const getColorForTimerState = (state: TimerState) => {
   if (state === TimerState.POMODORO) {
-    return 'red.500';
+    return 'purple.500';
   }
   if (state === TimerState.SHORT_BREAK) {
-    return 'blue.500';
+    return 'teal.500';
   }
   if (state === TimerState.LONG_BREAK) {
-    return 'teal.500';
+    return 'cyan.500';
   }
   return 'gray.500';
 };
