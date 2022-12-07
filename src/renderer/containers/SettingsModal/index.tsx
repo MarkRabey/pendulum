@@ -32,7 +32,7 @@ const SettingsModal = () => {
     <>
       <Tooltip label="Settings" hasArrow>
         <Button onClick={onOpen}>
-          <Icon color="gray.400" fontSize={24} as={MdSettings} />
+          <Icon fontSize={24} as={MdSettings} />
         </Button>
       </Tooltip>
 
