@@ -1,13 +1,5 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  Menu,
-  Rectangle,
-  shell,
-  Tray,
-} from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron';
 import path from 'path';
 import pkg from '../../package.json';
 import formatTimer from '../shared/utils/formatTimer';
@@ -64,24 +56,6 @@ if (isDebug) {
   require('electron-debug')();
 }
 
-const getWindowPosition = () => {
-  const windowBounds: Rectangle = mainWindow
-    ? mainWindow?.getBounds()
-    : { x: 0, y: 0, width: 16, height: 16 };
-
-  const trayBounds: Rectangle = tray
-    ? tray.getBounds()
-    : { x: 0, y: 0, width: 16, height: 16 };
-
-  const x = Math.round(
-    trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2
-  );
-
-  const y = Math.round(trayBounds.y + trayBounds.height + 4);
-
-  return { x, y };
-};
-
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -95,14 +69,25 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const showWindow = () => {
+  mainWindow?.show();
+  mainWindow?.focus();
+};
+
+let isAppQuitting = false;
+app.on('before-quit', () => {
+  isAppQuitting = true;
+});
+
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
 
   mainWindow = new BrowserWindow({
-    width: 560,
+    width: 460,
     height: 800,
+    minWidth: 460,
     show: false,
     webPreferences: {
       backgroundThrottling: false,
@@ -120,12 +105,15 @@ const createWindow = async () => {
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
-      mainWindow.show();
+      showWindow();
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  mainWindow.on('close', (e) => {
+    if (!isAppQuitting) {
+      e.preventDefault();
+      mainWindow?.hide();
+    }
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
@@ -137,20 +125,19 @@ const createWindow = async () => {
   });
 };
 
-const showWindow = () => {
-  // const position = getWindowPosition();
-  // // mainWindow?.setPosition(position.x, position.y, false);
-  mainWindow?.show();
-  mainWindow?.focus();
-};
-
 const createTray = () => {
   tray = new Tray(getAssetPath('icons/16x16.png'));
   tray.setToolTip('Pendulem');
   const menu = Menu.buildFromTemplate([
     {
       label: `Show`,
-      click: showWindow,
+      click: () => {
+        if (mainWindow) {
+          showWindow();
+        } else {
+          // createWindow();
+        }
+      },
     },
     {
       label: 'About',
