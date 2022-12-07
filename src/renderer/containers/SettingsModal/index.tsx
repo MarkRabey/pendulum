@@ -25,7 +25,12 @@ const SettingsModal = () => {
         </Button>
       </Tooltip>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="full"
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Settings</ModalHeader>

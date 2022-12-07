@@ -8,9 +8,17 @@ import React, {
 import notifications from 'renderer/utils/notifications';
 import { useSettingsContext } from '../SettingsContext';
 
+export enum TimerState {
+  POMODORO = 'Pomodoro',
+  SHORT_BREAK = 'Short Break',
+  LONG_BREAK = 'Long Break',
+}
+
 export type TimerContextType = {
   time: number;
   timerRunning: boolean;
+  timerState: TimerState;
+  handleSetTimerState: (state: TimerState) => void;
   toggleTimer: () => void;
   handleReset: () => void;
 };
@@ -23,6 +31,11 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   const [time, setTime] = useState(pomodoroTime);
   const [timerRunning, setTimerRunning] = useState(false);
   const [pomodoroCooldown, setPomodoroCooldown] = useState(false);
+  const [timerState, setTimerState] = useState(TimerState.POMODORO);
+
+  const handleSetTimerState = (state: TimerState) => {
+    setTimerState(state);
+  };
 
   const toggleTimer = () => {
     setTimerRunning(!timerRunning);
@@ -89,6 +102,8 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         time,
         timerRunning,
+        timerState,
+        handleSetTimerState,
         toggleTimer,
         handleReset,
       }}
