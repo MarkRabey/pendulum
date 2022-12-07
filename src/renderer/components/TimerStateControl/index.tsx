@@ -9,31 +9,27 @@ interface TimerStateControlProps {
 const TimerStateControl = ({
   timerState,
   onChange,
-}: TimerStateControlProps) => {
-  console.log({ onChange });
-
-  return (
-    <Stack direction="row">
-      <Button
-        variant={timerState === TimerState.POMODORO ? 'solid' : 'ghost'}
-        onClick={() => onChange(TimerState.POMODORO)}
-      >
-        {TimerState.POMODORO}
-      </Button>
-      <Button
-        variant={timerState === TimerState.SHORT_BREAK ? 'solid' : 'ghost'}
-        onClick={() => onChange(TimerState.SHORT_BREAK)}
-      >
-        {TimerState.SHORT_BREAK}
-      </Button>
-      <Button
-        variant={timerState === TimerState.LONG_BREAK ? 'solid' : 'ghost'}
-        onClick={() => onChange(TimerState.LONG_BREAK)}
-      >
-        {TimerState.LONG_BREAK}
-      </Button>
-    </Stack>
-  );
-};
+}: TimerStateControlProps) => (
+  <Stack direction="row">
+    <Button
+      variant={timerState === TimerState.POMODORO ? 'solid' : 'ghost'}
+      onClick={() => onChange(TimerState.POMODORO)}
+    >
+      {TimerState.POMODORO}
+    </Button>
+    <Button
+      variant={timerState === TimerState.SHORT_BREAK ? 'solid' : 'ghost'}
+      onClick={() => onChange(TimerState.SHORT_BREAK)}
+    >
+      {TimerState.SHORT_BREAK}
+    </Button>
+    <Button
+      variant={timerState === TimerState.LONG_BREAK ? 'solid' : 'ghost'}
+      onClick={() => onChange(TimerState.LONG_BREAK)}
+    >
+      {TimerState.LONG_BREAK}
+    </Button>
+  </Stack>
+);
 
 export default TimerStateControl;

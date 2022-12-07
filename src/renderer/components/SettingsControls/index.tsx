@@ -15,29 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { useSettingsContext } from 'renderer/context/SettingsContext';
 
-const intervalOptions = [
-  {
-    value: 10,
-    label: '10 seconds',
-  },
-  {
-    value: 300,
-    label: '5 minutes',
-  },
-  {
-    value: 600,
-    label: '10 minutes',
-  },
-  {
-    value: 900,
-    label: '15 minutes',
-  },
-  {
-    value: 1500,
-    label: '25 minutes',
-  },
-];
-
 const SettingsControls = () => {
   const { colorMode, setColorMode } = useColorMode();
   const {

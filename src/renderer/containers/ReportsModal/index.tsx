@@ -24,7 +24,12 @@ const ReportsModal = () => {
         </Button>
       </Tooltip>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="full"
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Report</ModalHeader>
