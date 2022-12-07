@@ -5,14 +5,10 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { TimerState } from 'renderer/constants';
+import useTimeForState from 'renderer/hooks/useTimeForState';
 import notifications from 'renderer/utils/notifications';
 import { useSettingsContext } from '../SettingsContext';
-
-export enum TimerState {
-  POMODORO = 'Pomodoro',
-  SHORT_BREAK = 'Short Break',
-  LONG_BREAK = 'Long Break',
-}
 
 export type TimerContextType = {
   time: number;
@@ -39,10 +35,7 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerState, setTimerState] = useState(TimerState.POMODORO);
   const [pomodoroCount, setPomodoroCount] = useState(0);
-
-  const handleSetTimerState = (state: TimerState) => {
-    setTimerState(state);
-  };
+  const stateTime = useTimeForState(timerState);
 
   const toggleTimer = () => {
     setTimerRunning(!timerRunning);
@@ -66,11 +59,15 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const handleReset = useCallback(() => {
-    setTime(pomodoroTime);
+    setTime(stateTime);
     setTimerRunning(false);
     setPomodoroCount(0);
-  }, [pomodoroTime]);
+  }, [stateTime]);
 
+  const handleSetTimerState = (state: TimerState) => {
+    setTimerState(state);
+    handleReset();
+  };
   const handleTimerComplete = useCallback(() => {
     setTimerRunning(false);
 

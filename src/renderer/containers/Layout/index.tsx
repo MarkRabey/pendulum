@@ -1,34 +1,21 @@
-import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, ThemeTypings, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import Header from 'renderer/components/Header';
-import { TimerState } from 'renderer/context/TimerContext';
 
 interface LayoutProps {
   children: React.ReactNode;
-  timerState: TimerState;
+  colorScheme?: ThemeTypings['colorSchemes'];
 }
-const getColorForTimerState = (state: TimerState) => {
-  if (state === TimerState.POMODORO) {
-    return 'purple.500';
-  }
-  if (state === TimerState.SHORT_BREAK) {
-    return 'teal.500';
-  }
-  if (state === TimerState.LONG_BREAK) {
-    return 'cyan.500';
-  }
-  return 'gray.500';
-};
 
-const Layout = ({ children, timerState }: LayoutProps) => {
-  const defaultBackgroundColor = useColorModeValue('white', 'gray.700');
-  const [backgroundColor, setBackgroundColor] = useState(
-    defaultBackgroundColor
-  );
+const Layout = ({ children, colorScheme = 'purple' }: LayoutProps) => {
+  const { colorMode } = useColorMode();
+  const [backgroundColor, setBackgroundColor] = useState(`${colorScheme}.500`);
 
   useEffect(() => {
-    setBackgroundColor(getColorForTimerState(timerState));
-  }, [timerState]);
+    setBackgroundColor(
+      `${colorScheme}.${colorMode === 'dark' ? '700' : '300'}`
+    );
+  }, [colorMode, colorScheme]);
 
   return (
     <Flex
@@ -39,12 +26,16 @@ const Layout = ({ children, timerState }: LayoutProps) => {
       flexDirection="column"
       transition="background-color .4s"
     >
-      <Header />
+      <Header colorScheme={colorScheme} />
       <Box width="100%" px={6}>
         {children}
       </Box>
     </Flex>
   );
+};
+
+Layout.defaultProps = {
+  colorScheme: 'purple',
 };
 
 export default Layout;

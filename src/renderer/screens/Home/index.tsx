@@ -1,36 +1,31 @@
-import { Flex } from '@chakra-ui/react';
+import { Button, Flex, useColorMode } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import TimerControls from 'renderer/components/TimerControls';
 import TimerDisplay from 'renderer/components/TimerDisplay';
 import TimerStateControl from 'renderer/components/TimerStateControl';
+import { TimerState } from 'renderer/constants';
 import Layout from 'renderer/containers/Layout';
 import { useSettingsContext } from 'renderer/context/SettingsContext';
-import { TimerState, useTimerContext } from 'renderer/context/TimerContext';
+import { useTimerContext } from 'renderer/context/TimerContext';
 
 const Home = () => {
+  const { colorMode } = useColorMode();
   const [startTime, setStartTime] = useState(0);
   const [timerProgress, setTimerProgress] = useState(0);
-  const [timerColor, setTimerColor] = useState('red');
-  const {
-    time,
-    timerRunning,
-    timerState,
-    handleSetTimerState,
-    toggleTimer,
-    handleReset,
-  } = useTimerContext();
+  const [colorScheme, setColorScheme] = useState('purple');
+  const { time, timerRunning, timerState, handleSetTimerState, toggleTimer } =
+    useTimerContext();
 
   const { pomodoroTime, shortBreakTime, longBreakTime } = useSettingsContext();
 
   useEffect(() => {
     if (timerState === TimerState.POMODORO) {
-      setTimerColor('purple');
+      setColorScheme('purple');
       setStartTime(pomodoroTime);
     } else if (timerState === TimerState.SHORT_BREAK) {
-      setTimerColor('teal');
+      setColorScheme('teal');
       setStartTime(shortBreakTime);
     } else if (timerState === TimerState.LONG_BREAK) {
-      setTimerColor('cyan');
+      setColorScheme('blue');
       setStartTime(longBreakTime);
     }
   }, [longBreakTime, pomodoroTime, shortBreakTime, timerState]);
@@ -40,30 +35,36 @@ const Home = () => {
   }, [startTime, time]);
 
   return (
-    <Layout timerState={timerState}>
+    <Layout colorScheme={colorScheme}>
       <Flex
         direction="column"
         alignItems="center"
-        backgroundColor="blackAlpha.100"
-        padding={10}
+        backgroundColor={
+          colorMode === 'dark' ? 'blackAlpha.300' : 'blackAlpha.100'
+        }
         borderRadius={8}
+        py={6}
       >
         <TimerStateControl
+          colorScheme={colorScheme}
           timerState={timerState}
+          timerRunning={timerRunning}
           onChange={handleSetTimerState}
         />
         <TimerDisplay
           value={timerProgress}
           time={time}
-          color={`${timerColor}.400`}
-          trackColor={`${timerColor}.600`}
+          colorScheme={colorScheme}
           size={160}
         />
-        <TimerControls
-          timerRunning={timerRunning}
-          toggleTimer={toggleTimer}
-          handleReset={handleReset}
-        />
+        <Button
+          variant="solid"
+          colorScheme={colorScheme}
+          size="lg"
+          onClick={toggleTimer}
+        >
+          {timerRunning ? 'Stop' : 'Start'}
+        </Button>
       </Flex>
     </Layout>
   );

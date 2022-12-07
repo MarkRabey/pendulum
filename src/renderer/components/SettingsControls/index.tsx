@@ -1,4 +1,5 @@
 import {
+  Button,
   Divider,
   Flex,
   FormControl,
@@ -13,10 +14,12 @@ import {
   Switch,
   useColorMode,
 } from '@chakra-ui/react';
+import { createRef } from 'react';
 import { useSettingsContext } from 'renderer/context/SettingsContext';
 
 const SettingsControls = () => {
   const { colorMode, setColorMode } = useColorMode();
+  const pomodoroTimeRef = createRef<HTMLDivElement>();
   const {
     autoStartPomodoros,
     handleSetAutoStartPomodoros,
@@ -34,6 +37,12 @@ const SettingsControls = () => {
     handleSetLongBreakInterval,
   } = useSettingsContext();
 
+  const handleResetTimes = () => {
+    handleSetPomodoroTime(1500);
+    handleSetShortBreakTime(300);
+    handleSetLongBreakTime(900);
+  };
+
   return (
     <Flex direction="column" width="100%">
       <FormLabel fontWeight="extrabold">Time (minutes)</FormLabel>
@@ -41,8 +50,9 @@ const SettingsControls = () => {
         <FormControl>
           <FormLabel color="gray.400">Pomodoro</FormLabel>
           <NumberInput
+            ref={pomodoroTimeRef}
             step={1}
-            defaultValue={pomodoroTime / 60}
+            value={pomodoroTime / 60}
             onChange={(value) =>
               handleSetPomodoroTime(parseInt(value, 10) * 60)
             }
@@ -59,7 +69,7 @@ const SettingsControls = () => {
           <FormLabel color="gray.400">Short Break</FormLabel>
           <NumberInput
             step={1}
-            defaultValue={shortBreakTime / 60}
+            value={shortBreakTime / 60}
             onChange={(value) =>
               handleSetShortBreakTime(parseInt(value, 10) * 60)
             }
@@ -76,7 +86,7 @@ const SettingsControls = () => {
           <FormLabel color="gray.400">Long Break</FormLabel>
           <NumberInput
             step={1}
-            defaultValue={longBreakTime / 60}
+            value={longBreakTime / 60}
             onChange={(value) =>
               handleSetLongBreakTime(parseInt(value, 10) * 60)
             }
@@ -89,6 +99,11 @@ const SettingsControls = () => {
           </NumberInput>
         </FormControl>
       </Stack>
+      <Flex mt={4}>
+        <Button size="sm" onClick={handleResetTimes} variant="link">
+          Reset times
+        </Button>
+      </Flex>
       <Divider my={4} />
 
       <FormControl display="flex" justifyContent="space-between">

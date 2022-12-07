@@ -7,6 +7,7 @@ import {
   AlertDialogOverlay,
   Button,
   ButtonProps,
+  ThemeTypings,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useCallback, useRef } from 'react';
@@ -19,26 +20,7 @@ interface ConfirmDialogProps {
   onConfirm?: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
-  confirmColorScheme?:
-    | 'blue'
-    | 'cyan'
-    | 'gray'
-    | 'green'
-    | 'orange'
-    | 'pink'
-    | 'purple'
-    | 'red'
-    | 'teal'
-    | 'yellow'
-    | 'whiteAlpha'
-    | 'blackAlpha'
-    | 'linkedin'
-    | 'facebook'
-    | 'messenger'
-    | 'whatsapp'
-    | 'twitter'
-    | 'telegram'
-    | undefined;
+  confirmColorScheme?: ThemeTypings['colorSchemes'];
 }
 
 const ConfirmDialog = ({
@@ -72,27 +54,26 @@ const ConfirmDialog = ({
         leastDestructiveRef={cancelRef}
         onClose={onClose}
       >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader>{title}</AlertDialogHeader>
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader>{title}</AlertDialogHeader>
 
-            <AlertDialogBody>{message}</AlertDialogBody>
+          <AlertDialogBody>{message}</AlertDialogBody>
 
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                {cancelLabel}
-              </Button>
+          <AlertDialogFooter>
+            <Button ref={cancelRef} onClick={onClose}>
+              {cancelLabel}
+            </Button>
 
-              <Button
-                colorScheme={confirmColorScheme}
-                onClick={handleConfirm}
-                ml={3}
-              >
-                {confirmLabel}
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
+            <Button
+              colorScheme={confirmColorScheme}
+              onClick={handleConfirm}
+              ml={3}
+            >
+              {confirmLabel}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
       </AlertDialog>
     </>
   );

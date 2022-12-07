@@ -1,11 +1,15 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, ThemeTypings } from '@chakra-ui/react';
 import SettingsModal from 'renderer/containers/SettingsModal';
 
-const Header = () => {
+interface HeaderProps {
+  colorScheme: ThemeTypings['colorSchemes'];
+}
+
+const Header = ({ colorScheme }: HeaderProps) => {
   return (
     <Flex justifyContent="flex-end" p={4} width="100%">
       {/* <ReportsModal /> */}
-      <SettingsModal />
+      <SettingsModal colorScheme={colorScheme} />
     </Flex>
   );
 };

@@ -8,6 +8,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  ThemeTypings,
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -15,7 +16,11 @@ import { useEffect } from 'react';
 import { MdSettings } from 'react-icons/md';
 import SettingsControls from 'renderer/components/SettingsControls';
 
-const SettingsModal = () => {
+interface SettingsModalProps {
+  colorScheme: ThemeTypings['colorSchemes'];
+}
+
+const SettingsModal = ({ colorScheme }: SettingsModalProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
@@ -31,17 +36,12 @@ const SettingsModal = () => {
   return (
     <>
       <Tooltip label="Settings" hasArrow>
-        <Button onClick={onOpen}>
+        <Button onClick={onOpen} colorScheme={colorScheme} variant="ghost">
           <Icon fontSize={24} as={MdSettings} />
         </Button>
       </Tooltip>
 
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size="full"
-        scrollBehavior="inside"
-      >
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Settings</ModalHeader>
