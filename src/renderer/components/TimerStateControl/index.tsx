@@ -1,5 +1,6 @@
 import { Button, Stack } from '@chakra-ui/react';
 import { TimerState } from 'renderer/context/TimerContext';
+import getEnumKeys from 'shared/utils/getEnumKeys';
 
 interface TimerStateControlProps {
   timerState: TimerState;
@@ -11,24 +12,15 @@ const TimerStateControl = ({
   onChange,
 }: TimerStateControlProps) => (
   <Stack direction="row">
-    <Button
-      variant={timerState === TimerState.POMODORO ? 'solid' : 'ghost'}
-      onClick={() => onChange(TimerState.POMODORO)}
-    >
-      {TimerState.POMODORO}
-    </Button>
-    <Button
-      variant={timerState === TimerState.SHORT_BREAK ? 'solid' : 'ghost'}
-      onClick={() => onChange(TimerState.SHORT_BREAK)}
-    >
-      {TimerState.SHORT_BREAK}
-    </Button>
-    <Button
-      variant={timerState === TimerState.LONG_BREAK ? 'solid' : 'ghost'}
-      onClick={() => onChange(TimerState.LONG_BREAK)}
-    >
-      {TimerState.LONG_BREAK}
-    </Button>
+    {getEnumKeys(TimerState).map((key) => (
+      <Button
+        key={key}
+        variant={timerState === TimerState[key] ? 'solid' : 'ghost'}
+        onClick={() => onChange(TimerState[key])}
+      >
+        {TimerState[key]}
+      </Button>
+    ))}
   </Stack>
 );
 
