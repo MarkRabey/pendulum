@@ -143,6 +143,7 @@ const createTray = () => {
         showWindow();
       },
     },
+    { type: 'separator' },
     {
       label: 'About Pendulum',
       role: 'about',
@@ -155,18 +156,6 @@ const createTray = () => {
   ]);
 
   tray.setContextMenu(menu);
-
-  // tray.on('right-click', () => {
-  //   mainWindow?.hide();
-  //   tray?.popUpContextMenu(menu);
-  // });
-  // tray.on('double-click', toggleWindow);
-  // tray.on('click', (event) => {
-  //   toggleWindow();
-  //   if (mainWindow?.isVisible() && process.defaultApp && event.metaKey) {
-  //     mainWindow.webContents.openDevTools({ mode: 'detach' });
-  //   }
-  // });
 };
 
 app.setAboutPanelOptions({
