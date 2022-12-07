@@ -1,4 +1,9 @@
+import { Rectangle } from 'electron';
 import Store, { Schema } from 'electron-store';
+
+export interface WindowData {
+  bounds: Rectangle;
+}
 
 export interface SettingsData {
   pomodoroTime: number;
@@ -12,6 +17,7 @@ export interface SettingsData {
 
 export type SchemaType = {
   settings: SettingsData;
+  window: WindowData;
 };
 
 const schema: Schema<SchemaType> = {
@@ -36,6 +42,20 @@ const schema: Schema<SchemaType> = {
       'showInMenu',
     ],
     additionalProperties: false,
+  },
+  window: {
+    type: 'object',
+    properties: {
+      bounds: {
+        type: 'object',
+        properties: {
+          width: { type: 'number', default: 460 },
+          height: { type: 'number', default: 800 },
+          x: { type: 'number', default: 0 },
+          y: { type: 'number', default: 0 },
+        },
+      },
+    },
   },
 };
 

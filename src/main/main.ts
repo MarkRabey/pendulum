@@ -83,10 +83,12 @@ const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
-
+  const { bounds } = store.get('window');
   mainWindow = new BrowserWindow({
-    width: 460,
-    height: 800,
+    width: bounds.width,
+    height: bounds.height,
+    x: bounds.x,
+    y: bounds.y,
     minWidth: 460,
     show: false,
     webPreferences: {
@@ -110,10 +112,13 @@ const createWindow = async () => {
   });
 
   mainWindow.on('close', (e) => {
-    if (!isAppQuitting) {
-      e.preventDefault();
-      mainWindow?.hide();
-      mainWindow?.webContents.send('close-preferences');
+    if (mainWindow) {
+      store.set('window', { bounds: mainWindow.getBounds() });
+      if (!isAppQuitting) {
+        e.preventDefault();
+        mainWindow.hide();
+        mainWindow.webContents.send('close-preferences');
+      }
     }
   });
 
