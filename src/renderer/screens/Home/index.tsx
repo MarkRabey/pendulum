@@ -10,12 +10,20 @@ import { useTimerContext } from 'renderer/context/TimerContext';
 const Home = () => {
   const { colorMode } = useColorMode();
   const [startTime, setStartTime] = useState(0);
+  const [pomodoroProgress, setPomodoroProgress] = useState(0);
   const [timerProgress, setTimerProgress] = useState(0);
   const [colorScheme, setColorScheme] = useState('purple');
-  const { time, timerRunning, timerState, handleSetTimerState, toggleTimer } =
-    useTimerContext();
+  const {
+    time,
+    timerRunning,
+    timerState,
+    pomodoroCount,
+    handleSetTimerState,
+    toggleTimer,
+  } = useTimerContext();
 
-  const { pomodoroTime, shortBreakTime, longBreakTime } = useSettingsContext();
+  const { pomodoroTime, shortBreakTime, longBreakTime, longBreakInterval } =
+    useSettingsContext();
 
   useEffect(() => {
     if (timerState === TimerState.POMODORO) {
@@ -34,6 +42,9 @@ const Home = () => {
     setTimerProgress(Math.round((time / startTime) * 100));
   }, [startTime, time]);
 
+  useEffect(() => {
+    setPomodoroProgress(Math.round((pomodoroCount / longBreakInterval) * 100));
+  }, [longBreakInterval, pomodoroCount]);
   return (
     <Layout colorScheme={colorScheme}>
       <Flex
@@ -52,10 +63,10 @@ const Home = () => {
           onChange={handleSetTimerState}
         />
         <TimerDisplay
-          value={timerProgress}
+          timerProgress={timerProgress}
+          pomodoroProgress={pomodoroProgress}
           time={time}
           colorScheme={colorScheme}
-          size={160}
         />
         <Button
           variant="solid"

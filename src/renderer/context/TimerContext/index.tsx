@@ -14,6 +14,7 @@ export type TimerContextType = {
   time: number;
   timerRunning: boolean;
   timerState: TimerState;
+  pomodoroCount: number;
   handleSetTimerState: (state: TimerState) => void;
   toggleTimer: () => void;
   handleReset: () => void;
@@ -158,6 +159,7 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
         time,
         timerRunning,
         timerState,
+        pomodoroCount,
         handleSetTimerState,
         toggleTimer,
         handleReset,
