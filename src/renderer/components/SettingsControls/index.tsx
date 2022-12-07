@@ -96,7 +96,7 @@ const SettingsControls = () => {
         <Switch
           size="lg"
           defaultChecked={autoStartBreaks}
-          onChange={() => handleSetAutoStartBreaks(!showInMenu)}
+          onChange={() => handleSetAutoStartBreaks(!autoStartBreaks)}
         />
       </FormControl>
       <Divider my={4} />

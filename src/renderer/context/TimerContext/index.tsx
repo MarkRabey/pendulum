@@ -26,12 +26,19 @@ export type TimerContextType = {
 export const TimerContext = createContext<TimerContextType | null>(null);
 
 const TimerProvider = ({ children }: { children: React.ReactNode }) => {
-  const { autoStartPomodoros, pomodoroTime, shortBreakTime, showInMenu } =
-    useSettingsContext();
+  const {
+    autoStartPomodoros,
+    autoStartBreaks,
+    longBreakInterval,
+    longBreakTime,
+    pomodoroTime,
+    shortBreakTime,
+    showInMenu,
+  } = useSettingsContext();
   const [time, setTime] = useState(pomodoroTime);
   const [timerRunning, setTimerRunning] = useState(false);
-  const [pomodoroCooldown, setPomodoroCooldown] = useState(false);
   const [timerState, setTimerState] = useState(TimerState.POMODORO);
+  const [pomodoroCount, setPomodoroCount] = useState(0);
 
   const handleSetTimerState = (state: TimerState) => {
     setTimerState(state);
@@ -41,22 +48,79 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     setTimerRunning(!timerRunning);
   };
 
+  const startTimer = useCallback(
+    (state: TimerState, newTime: number, notification?: string) => {
+      if (notification) {
+        notifications.sendNotification(notification);
+      }
+      if (timerState === TimerState.POMODORO) {
+        setPomodoroCount(
+          pomodoroCount >= longBreakInterval ? 0 : pomodoroCount + 1
+        );
+      }
+      setTimerState(state);
+      setTime(newTime);
+      setTimerRunning(true);
+    },
+    [longBreakInterval, pomodoroCount, timerState]
+  );
+
   const handleReset = useCallback(() => {
     setTime(pomodoroTime);
     setTimerRunning(false);
-    setPomodoroCooldown(false);
+    setPomodoroCount(0);
   }, [pomodoroTime]);
 
-  const handlePomodoroComplete = useCallback(() => {
-    if (pomodoroCooldown) {
-      handleReset();
-    } else {
-      notifications.sendNotification('Cooldown');
-      setPomodoroCooldown(true);
-      setTime(shortBreakTime); // 5 minute cooldown
-      setTimerRunning(true);
+  const handleTimerComplete = useCallback(() => {
+    setTimerRunning(false);
+
+    if (timerState === TimerState.POMODORO) {
+      if (autoStartBreaks) {
+        if (pomodoroCount < longBreakInterval) {
+          startTimer(
+            TimerState.SHORT_BREAK,
+            shortBreakTime,
+            'Time for a short break'
+          );
+        } else {
+          startTimer(
+            TimerState.LONG_BREAK,
+            longBreakTime,
+            'Time for a longer break'
+          );
+        }
+      } else if (autoStartPomodoros) {
+        startTimer(TimerState.POMODORO, pomodoroTime);
+      } else {
+        notifications.sendNotification('Timer finished');
+        handleReset();
+      }
+    } else if (timerState === TimerState.SHORT_BREAK) {
+      if (autoStartBreaks) {
+        startTimer(TimerState.POMODORO, pomodoroTime, 'Time to refocus');
+      } else {
+        handleReset();
+      }
+    } else if (timerState === TimerState.LONG_BREAK) {
+      if (autoStartPomodoros) {
+        notifications.sendNotification('Time to refocus');
+        startTimer(TimerState.POMODORO, pomodoroTime);
+      } else {
+        handleReset();
+      }
     }
-  }, [handleReset, pomodoroCooldown, shortBreakTime]);
+  }, [
+    timerState,
+    autoStartBreaks,
+    autoStartPomodoros,
+    pomodoroCount,
+    longBreakInterval,
+    startTimer,
+    shortBreakTime,
+    longBreakTime,
+    pomodoroTime,
+    handleReset,
+  ]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -65,24 +129,18 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
           setTime(time - 1);
         } else if (time === 0) {
           clearInterval(interval);
-          setTimerRunning(false);
-          if (autoStartPomodoros) {
-            handlePomodoroComplete();
-          } else {
-            handleReset();
-            notifications.sendNotification('Timer Complete');
-          }
+          handleTimerComplete();
         }
       }
     }, 1000);
 
     return () => clearInterval(interval);
   }, [
-    handlePomodoroComplete,
     handleReset,
     autoStartPomodoros,
     time,
     timerRunning,
+    handleTimerComplete,
   ]);
 
   useEffect(() => {
