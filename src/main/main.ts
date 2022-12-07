@@ -113,6 +113,7 @@ const createWindow = async () => {
     if (!isAppQuitting) {
       e.preventDefault();
       mainWindow?.hide();
+      mainWindow?.webContents.send('close-preferences');
     }
   });
 
@@ -130,22 +131,25 @@ const createTray = () => {
   tray.setToolTip('Pendulem');
   const menu = Menu.buildFromTemplate([
     {
-      label: `Show`,
+      label: 'Main Window',
       click: () => {
-        if (mainWindow) {
-          showWindow();
-        } else {
-          // createWindow();
-        }
+        showWindow();
       },
     },
     {
-      label: 'About',
+      label: process.platform === 'darwin' ? 'Preferences...' : 'Settings',
+      click: () => {
+        mainWindow?.webContents.send('open-preferences');
+        showWindow();
+      },
+    },
+    {
+      label: 'About Pendulum',
       role: 'about',
     },
     { type: 'separator' },
     {
-      label: 'Quit',
+      label: 'Quit Pendulum',
       role: 'quit',
     },
   ]);

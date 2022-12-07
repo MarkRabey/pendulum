@@ -1,7 +1,11 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { SettingsData } from './store';
 
-export type Channels = 'ipc-example' | 'notify';
+export type Channels =
+  | 'ipc-example'
+  | 'notify'
+  | 'open-preferences'
+  | 'close-preferences';
 
 contextBridge.exposeInMainWorld('electron', {
   notificationApi: {

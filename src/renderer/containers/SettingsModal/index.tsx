@@ -11,11 +11,22 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { MdSettings } from 'react-icons/md';
 import SettingsControls from 'renderer/components/SettingsControls';
 
 const SettingsModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('open-preferences', () => {
+      onOpen();
+    });
+
+    window.electron.ipcRenderer.on('close-preferences', () => {
+      onClose();
+    });
+  }, [onOpen, onClose]);
 
   return (
     <>
