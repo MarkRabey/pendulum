@@ -23,7 +23,7 @@ const TimerDisplay = ({ time, colorScheme, ...rest }: TimerDisplayProps) => {
       trackColor={`${colorScheme}.200`}
       {...rest}
     >
-      <CircularProgressLabel as="kbd" color="white">
+      <CircularProgressLabel as="kbd" color="white" fontFamily="Fira Mono">
         {formatTimer(time)}
       </CircularProgressLabel>
     </CircularProgress>

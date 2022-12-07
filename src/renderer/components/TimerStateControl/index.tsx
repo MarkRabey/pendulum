@@ -33,6 +33,7 @@ const TimerStateControl = ({
       }
       return (
         <ConfirmDialog
+          key={key}
           triggerLabel={TimerState[key]}
           triggerButtonProps={{
             colorScheme,

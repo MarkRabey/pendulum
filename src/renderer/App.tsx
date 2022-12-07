@@ -3,6 +3,8 @@ import './App.css';
 import Provider from './Provider';
 import Home from './screens/Home';
 
+import '@fontsource/fira-mono';
+
 export default function App() {
   return (
     <Provider>

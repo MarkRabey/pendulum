@@ -110,6 +110,7 @@
     "@electron/remote": "^2.0.9",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@fontsource/fira-mono": "^4.5.10",
     "ajv": "^8.11.2",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",

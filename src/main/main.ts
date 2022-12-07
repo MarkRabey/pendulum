@@ -138,6 +138,7 @@ const createTray = () => {
     {
       label: 'Main Window',
       click: () => {
+        mainWindow?.webContents.send('close-preferences');
         showWindow();
       },
     },
