@@ -61,6 +61,7 @@ const schema: Schema<SchemaType> = {
 
 export const STORE_KEYS: { [key: string]: keyof SchemaType } = {
   SETTINGS: 'settings',
+  WINDOW: 'window',
 };
 
 const store = new Store<SchemaType>({ schema });

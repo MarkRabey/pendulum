@@ -7,20 +7,8 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
-interface NotificationOptions {
-  title?: string;
-  message: string;
-}
-
 ipcMain.on(
   'notify',
-  (_, { title = 'Pedulum', message }: NotificationOptions) => {
-    new Notification({ title, body: message }).show();
-  }
-);
-
-ipcMain.handle(
-  'send-message',
   (_, { title = 'Pedulum', message }: NotificationOptions) => {
     new Notification({ title, body: message }).show();
   }

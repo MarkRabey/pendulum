@@ -1,5 +1,14 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
-import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  Notification,
+  Rectangle,
+  shell,
+  Tray,
+} from 'electron';
 import path from 'path';
 import pkg from '../../package.json';
 import formatTimer from '../shared/utils/formatTimer';
@@ -8,8 +17,31 @@ import MenuBuilder from './menu';
 import store, { STORE_KEYS } from './store';
 import { resolveHtmlPath } from './util';
 
+interface NotificationOptions {
+  title?: string;
+  message: string;
+}
+
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
+
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
+ipcMain.handle(
+  'send-message',
+  (_, { title = 'Pedulum', message }: NotificationOptions) => {
+    new Notification({
+      title,
+      body: message,
+    }).show();
+  }
+);
 
 ipcMain.handle('store:getSettings', async () => {
   const settings = store.get(STORE_KEYS.SETTINGS);
@@ -35,14 +67,6 @@ ipcMain.handle('timer:set-time', async (_, time: number) => {
     }
   }
 });
-
-const RESOURCES_PATH = app.isPackaged
-  ? path.join(process.resourcesPath, 'assets')
-  : path.join(__dirname, '../../assets');
-
-const getAssetPath = (...paths: string[]): string => {
-  return path.join(RESOURCES_PATH, ...paths);
-};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -83,7 +107,15 @@ const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
-  const { bounds } = store.get('window');
+  const windowConfig = store.get('window');
+  const bounds: Rectangle = windowConfig
+    ? windowConfig.bounds
+    : {
+        width: 460,
+        height: 800,
+        x: 0,
+        y: 0,
+      };
   mainWindow = new BrowserWindow({
     width: bounds.width,
     height: bounds.height,
@@ -91,6 +123,7 @@ const createWindow = async () => {
     y: bounds.y,
     minWidth: 460,
     show: false,
+    icon: getAssetPath('icon.icns'),
     webPreferences: {
       backgroundThrottling: false,
       preload: app.isPackaged
