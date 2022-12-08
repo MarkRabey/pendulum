@@ -26,7 +26,7 @@ const TimerStateControl = ({
             variant={timerState === TimerState[key] ? 'solid' : 'ghost'}
             onClick={() => (!isCurrent ? onChange(TimerState[key]) : null)}
             colorScheme={colorScheme}
-            size="sm"
+            size="xs"
           >
             {TimerState[key]}
           </Button>
@@ -39,7 +39,7 @@ const TimerStateControl = ({
           triggerButtonProps={{
             colorScheme,
             variant: 'ghost',
-            size: 'sm',
+            size: 'xs',
           }}
           message="This will stop the current timer. Do you really want to do this?"
           confirmColorScheme={colorScheme}

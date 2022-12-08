@@ -54,7 +54,8 @@ const Home = () => {
           colorMode === 'dark' ? 'blackAlpha.300' : 'blackAlpha.100'
         }
         borderRadius={8}
-        py={6}
+        p={6}
+        flex={1}
       >
         <TimerStateControl
           colorScheme={colorScheme}

@@ -28,8 +28,8 @@ const schema: Schema<SchemaType> = {
       shortBreakTime: { type: 'number', default: 300 },
       longBreakTime: { type: 'number', default: 900 },
       longBreakInterval: { type: 'number', default: 4 },
-      autoStartBreaks: { type: 'boolean', default: false },
-      autoStartPomodoros: { type: 'boolean', default: false },
+      autoStartBreaks: { type: 'boolean', default: true },
+      autoStartPomodoros: { type: 'boolean', default: true },
       showInMenu: { type: 'boolean', default: false },
     },
     required: [

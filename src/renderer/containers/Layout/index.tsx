@@ -27,9 +27,7 @@ const Layout = ({ children, colorScheme = 'purple' }: LayoutProps) => {
       transition="background-color .4s"
     >
       <Header colorScheme={colorScheme} />
-      <Box width="100%" px={6}>
-        {children}
-      </Box>
+      <Box>{children}</Box>
     </Flex>
   );
 };

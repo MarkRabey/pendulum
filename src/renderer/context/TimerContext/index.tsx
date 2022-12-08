@@ -47,16 +47,11 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
       if (notification) {
         notifications.sendNotification(notification);
       }
-      if (timerState === TimerState.POMODORO) {
-        setPomodoroCount(
-          pomodoroCount >= longBreakInterval ? 0 : pomodoroCount + 1
-        );
-      }
       setTimerState(state);
       setTime(newTime);
       setTimerRunning(true);
     },
-    [longBreakInterval, pomodoroCount, timerState]
+    []
   );
 
   const handleReset = useCallback(() => {
@@ -73,8 +68,10 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     setTimerRunning(false);
 
     if (timerState === TimerState.POMODORO) {
+      setPomodoroCount(pomodoroCount + 1);
+
       if (autoStartBreaks) {
-        if (pomodoroCount < longBreakInterval) {
+        if (pomodoroCount + 1 < longBreakInterval) {
           startTimer(
             TimerState.SHORT_BREAK,
             shortBreakTime,
@@ -101,6 +98,7 @@ const TimerProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } else if (timerState === TimerState.LONG_BREAK) {
       if (autoStartPomodoros) {
+        setPomodoroCount(0);
         notifications.sendNotification('Time to refocus');
         startTimer(TimerState.POMODORO, pomodoroTime);
       } else {
