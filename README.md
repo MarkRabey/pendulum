@@ -16,7 +16,7 @@ Coming soon
 **Donations will ensure the following:**
 
 - 🔨 Long term maintenance of the project
-- 🛣 Progress on the [roadmap](https://electron-react-boilerplate.js.org/docs/roadmap)
+- 🛣 Progress on the roadmap (like making one!)
 - 🐛 Quick responses to bug reports and help requests
 
 ## Backers
@@ -37,8 +37,10 @@ MIT © [Mark Rabey](https://github.com/MarkRabey)
 
 ## Acknowledgements
 
-This project was bootstraped using Electron React Boilerplate
+This project was bootstraped using <a href="https://electron-react-boilerplate.js.org/">Electron React Boilerplate</a>
+<a href="https://electron-react-boilerplate.js.org/">
 <img src=".erb/img/erb-banner.svg" width="100%" />
+</a>
 
 <br>
 
