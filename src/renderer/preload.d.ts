@@ -10,6 +10,7 @@ declare global {
       storeSettings: (setting: SettingsData) => Promise<SettingsData>;
       getSettings: () => Promise<SettingsData>;
       setTime: (time: number) => void;
+      sendMessage: (message: string) => void;
       saveSetting: ({
         key,
         value,

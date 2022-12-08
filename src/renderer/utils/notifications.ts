@@ -1,5 +1,5 @@
 const sendNotification = (message: string) => {
-  electron.ipcRenderer.sendMessage('notify', { message });
+  window.electron.sendMessage(message);
 };
 
 export default {

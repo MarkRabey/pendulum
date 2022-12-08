@@ -20,6 +20,13 @@ ipcMain.on(
 );
 
 ipcMain.handle(
+  'send-message',
+  (_, { title = 'Pedulum', message }: NotificationOptions) => {
+    new Notification({ title, body: message }).show();
+  }
+);
+
+ipcMain.handle(
   'store:saveSetting',
   async (_, { key, value }: { key: keyof SettingsData; value: any }) => {
     const currentSettings = store.get(STORE_KEYS.SETTINGS);
